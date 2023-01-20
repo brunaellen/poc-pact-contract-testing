@@ -14,15 +14,14 @@ public class ProductService {
 
     ProductRepository productRepository;
 
-    public ProductDto updateAProduct(final ProductDto product) {
+    public Optional<ProductDto> updateAProduct(final ProductDto product) {
         final Optional<Product> existingProduct = getExistingProduct(product.getProductId());
 
         if(existingProduct.isPresent()) {
             final Product productUpdated = productRepository.save(new Product(product.getProductId(), product.getName(), product.getPrice()));
-            return new ProductDto(productUpdated.getId(), productUpdated.getName(), product.getPrice());
-        } else {
-            throw new RuntimeException("product not found");
+            return Optional.of(new ProductDto(productUpdated.getId(), productUpdated.getName(), product.getPrice()));
         }
+        return Optional.empty();
     }
 
     private Optional<Product> getExistingProduct(long productId) {

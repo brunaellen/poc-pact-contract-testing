@@ -32,15 +32,14 @@ class ProductServiceTest {
         when(productRepositoryMock.findById(1L)).thenReturn(Optional.of(existingProduct));
         when(productRepositoryMock.save(expectedProduct)).thenReturn(expectedProduct);
 
-        final ProductDto product = productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50)));
+        final Optional<ProductDto> product = productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50)));
 
-        assertThat(product.getPrice()).isEqualTo(BigDecimal.valueOf(10.50));
+        assertThat(product.get().getPrice()).isEqualTo(BigDecimal.valueOf(10.50));
     }
 
     @Test
-    void givenAProductNotRegistered_updateAProduct_shouldThrowsException() {
-        assertThatThrownBy(() -> productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50))))
-            .isInstanceOf(RuntimeException.class)
-            .hasMessage("product not found");
+    void givenAProductNotRegistered_updateAProduct_shouldReturnAnEmptyProduct() {
+        assertThat(productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50))))
+            .isEqualTo(Optional.empty());
     }
 }
