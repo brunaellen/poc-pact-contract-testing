@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -27,19 +26,23 @@ class ProductServiceTest {
     @Test
     void updateAProduct_shouldUpdateAnExistingProduct() {
         final Product existingProduct = new Product(1L, "sofa", BigDecimal.valueOf(5.00));
-        final Product expectedProduct = new Product(1L, "sofa", BigDecimal.valueOf(10.50));
+        final Product expectedProduct = new Product(1L, "sofa", BigDecimal.valueOf(15.20));
 
         when(productRepositoryMock.findById(1L)).thenReturn(Optional.of(existingProduct));
         when(productRepositoryMock.save(expectedProduct)).thenReturn(expectedProduct);
 
-        final Optional<ProductDto> product = productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50)));
+        final Optional<ProductDto> productDto = productService.updateAProduct(new ProductDto(1L,
+            "sofa", BigDecimal.valueOf(15.20)));
 
-        assertThat(product.get().getPrice()).isEqualTo(BigDecimal.valueOf(10.50));
+        assertThat(productDto).isPresent();
+        assertThat(productDto.get().getPrice()).isEqualTo(BigDecimal.valueOf(15.20));
     }
 
     @Test
     void givenAProductNotRegistered_updateAProduct_shouldReturnAnEmptyProduct() {
-        assertThat(productService.updateAProduct(new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50))))
-            .isEqualTo(Optional.empty());
+        Optional<ProductDto> productDto = productService.updateAProduct(new ProductDto(1L,
+            "sofa", BigDecimal.valueOf(10.50)));
+
+        assertThat(productDto).isNotPresent();
     }
 }
