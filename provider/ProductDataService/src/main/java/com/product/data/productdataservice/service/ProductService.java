@@ -4,21 +4,27 @@ import com.product.data.productdataservice.controller.dto.ProductDto;
 import com.product.data.productdataservice.model.Product;
 import com.product.data.productdataservice.repository.ProductRepository;
 import lombok.Value;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @Value
+@Log4j2
 public class ProductService {
 
     ProductRepository productRepository;
 
     public Optional<ProductDto> updateAProduct(final ProductDto product) {
         final Optional<Product> existingProduct = getExistingProduct(product.getProductId());
+        log.info("existing product is existingProduct={}", existingProduct);
+
 
         if(existingProduct.isPresent()) {
             final Product productUpdated = productRepository.save(new Product(product.getProductId(), product.getName(), product.getPrice()));
+            log.info("The product updated is productUpdated={}", productUpdated);
+
             return Optional.of(new ProductDto(productUpdated.getId(), productUpdated.getName(), product.getPrice()));
         }
         return Optional.empty();
