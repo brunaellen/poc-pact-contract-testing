@@ -18,19 +18,22 @@ public class ProductService {
 
     public Optional<ProductDto> updateAProduct(final ProductDto product) {
         final Optional<Product> existingProduct = getExistingProduct(product.getProductId());
-        log.info("existing product is existingProduct={}", existingProduct);
-
 
         if(existingProduct.isPresent()) {
             final Product productUpdated = productRepository.save(new Product(product.getProductId(), product.getName(), product.getPrice()));
+
             log.info("The product updated is productUpdated={}", productUpdated);
 
-            return Optional.of(new ProductDto(productUpdated.getId(), productUpdated.getName(), product.getPrice()));
+            return Optional.of(ProductDto.builder()
+                .productId(productUpdated.getId())
+                .name(productUpdated.getName())
+                .price(product.getPrice())
+                .build());
         }
         return Optional.empty();
     }
 
-    private Optional<Product> getExistingProduct(long productId) {
+    private Optional<Product> getExistingProduct(final long productId) {
         return productRepository.findById(productId);
     }
 }

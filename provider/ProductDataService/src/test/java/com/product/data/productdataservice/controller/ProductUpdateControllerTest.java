@@ -26,17 +26,26 @@ class ProductUpdateControllerTest {
 
   @Test
   void updateProduct_shouldUpdateAnExistingProduct() {
-    ProductDto productDto = new ProductDto(1L, "sofa", BigDecimal.valueOf(10.50));
+    ProductDto expectedUpdatedProduct = ProductDto.builder()
+        .productId(1L)
+        .name("sofa")
+        .price(BigDecimal.valueOf(15.20))
+        .build();
 
-    when(productServiceMock.updateAProduct(productDto)).thenReturn(Optional.of(productDto));
+    when(productServiceMock.updateAProduct(expectedUpdatedProduct)).thenReturn(Optional.of(expectedUpdatedProduct));
 
-    ProductDto productUpdated = productUpdateController.updateProduct(productDto).getBody();
-     assertThat(productUpdated).isEqualTo(productDto);
+    ProductDto productUpdated = productUpdateController.updateProduct(expectedUpdatedProduct).getBody();
+
+    assertThat(productUpdated).isEqualTo(expectedUpdatedProduct);
   }
 
   @Test
   void givenAProductNotRegistered_updateProduct_shouldThrowsException() {
-    ProductDto productDto = new ProductDto(3L, "sofa", BigDecimal.valueOf(10.50));
+    ProductDto productDto = ProductDto.builder()
+        .productId(3L)
+        .name("sofa")
+        .price(BigDecimal.valueOf(15.20))
+        .build();
 
     assertThatThrownBy(() -> productUpdateController.updateProduct(productDto))
         .isInstanceOf(ResponseStatusException.class)
