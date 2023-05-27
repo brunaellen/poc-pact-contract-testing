@@ -2,7 +2,7 @@ package com.product.data.productdataservice.controller;
 
 import com.product.data.productdataservice.controller.dto.ProductDto;
 import com.product.data.productdataservice.service.ProductService;
-import lombok.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,10 +15,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
-@Value
+@RequiredArgsConstructor
 public class ProductUpdateController {
 
-  ProductService productService;
+  private final ProductService productService;
   @PutMapping("/update")
   public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productToUpdate) {
     final Optional<ProductDto> productDto = productService.updateAProduct(productToUpdate);
@@ -28,6 +28,5 @@ public class ProductUpdateController {
     } else {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "product does not exist!");
     }
-
   }
 }

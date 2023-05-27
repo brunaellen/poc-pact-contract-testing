@@ -26,22 +26,28 @@ class ProductServiceTest {
     @Test
     void updateAProduct_shouldUpdateAnExistingProduct() {
         final Product existingProduct = new Product(1L, "sofa", BigDecimal.valueOf(5.00));
-        final Product expectedProduct = new Product(1L, "sofa", BigDecimal.valueOf(15.20));
+        final Product savedProduct = new Product(1L, "sofa", BigDecimal.valueOf(15.20));
 
         when(productRepositoryMock.findById(1L)).thenReturn(Optional.of(existingProduct));
-        when(productRepositoryMock.save(expectedProduct)).thenReturn(expectedProduct);
+        when(productRepositoryMock.save(savedProduct)).thenReturn(savedProduct);
 
-        final Optional<ProductDto> productDto = productService.updateAProduct(new ProductDto(1L,
-            "sofa", BigDecimal.valueOf(15.20)));
+        final Optional<ProductDto> productDto = productService.updateAProduct(ProductDto.builder()
+            .productId(1L)
+            .name("sofa")
+            .price(BigDecimal.valueOf(15.20))
+            .build());
 
         assertThat(productDto).isPresent();
-        assertThat(productDto.get().getPrice()).isEqualTo(BigDecimal.valueOf(15.20));
+        assertThat(productDto.get().getPrice()).isEqualTo(savedProduct.getPrice());
     }
 
     @Test
     void givenAProductNotRegistered_updateAProduct_shouldReturnAnEmptyProduct() {
-        Optional<ProductDto> productDto = productService.updateAProduct(new ProductDto(1L,
-            "sofa", BigDecimal.valueOf(10.50)));
+        Optional<ProductDto> productDto = productService.updateAProduct(ProductDto.builder()
+            .productId(4L)
+            .name("sofa")
+            .price(BigDecimal.valueOf(15.20))
+            .build());
 
         assertThat(productDto).isNotPresent();
     }
